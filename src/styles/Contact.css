@@ -1,0 +1,40 @@
+.contact {
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .contact h1 {
+    color: var(--color-highlight);
+    font-size: 2rem;
+  }
+  
+  .contact ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .contact li {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+  }
+  
+  .contact form {
+    margin-top: 1rem;
+  }
+  
+  .contact form label {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  .contact form input,
+  .contact form textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  

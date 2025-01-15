@@ -1,0 +1,7 @@
+.message {
+    text-align: center;
+    color: var(--color-highlight);
+    font-size: 1.2rem;
+    margin: 1rem 0;
+  }
+  

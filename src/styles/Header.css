@@ -1,0 +1,46 @@
+.header {
+  display: flex;
+  align-items: center;
+  position: sticky; /* Hace que el header sea fijo pero relativo al contenedor */
+  top: 0; /* Siempre visible en la parte superior */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  background-color: var(--color-bg); /* Fondo consistente */
+  color: var(--color-text);
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+  }
+  
+  .header__logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .header__nav {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .header__menu {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header__menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .header__link {
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  
+  .header__link:hover {
+    text-decoration: underline;
+    color: var(--color-highlight);
+  }
+  

@@ -1,0 +1,13 @@
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta las columnas dinámicamente */
+    gap: 1rem; /* Espaciado entre las tarjetas */
+    justify-content: center; /* Centra el grid si hay pocas tarjetas */
+    padding: 1rem;
+  }
+  
+  
+  .product-list__item {
+    list-style: none;
+  }
+  
