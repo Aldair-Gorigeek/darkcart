@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header cartCount={cartItems.length} /> {/* Pasamos el contador al Header */}
+        <Header cartCount={cartItems.length} />
         <Routes>
           <Route path="/" element={<Home addToCart={addToCart} />} />
           <Route
