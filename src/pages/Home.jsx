@@ -2,90 +2,121 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Home.css';
 import ProductList from '../components/ProductList';
 import Loader from '../components/Loader';
-import Message from '../components/Message'; // Importamos el componente Message
-import SearchBar from '../components/SearchBar'; // Importamos el componente SearchBar
-import products from '../data/products';
+import Message from '../components/Message';
+import SearchBar from '../components/SearchBar';
+import api, { getFacets } from '../api/axiosInstance';
 
 const Home = ({ addToCart }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]); // 🔹 Categorías obtenidas con `facets`
+  const [selectedCategory, setSelectedCategory] = useState(''); // 🔹 Filtro de categoría
 
-  // Simular tiempo de carga
+  // 🔹 Cargar productos desde el backend
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setFilteredProducts(products);
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timeout);
+    api.get('/items')
+      .then((response) => {
+        setProducts(response.data);
+        setFilteredProducts(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los productos:', error);
+        setLoading(false);
+      });
   }, []);
 
-  // Filtrar productos por búsqueda y categoría
+  // 🔹 Cargar categorías desde el backend con manejo de errores
   useEffect(() => {
-    const results = products.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const fetchFacets = async () => {
+      try {
+        const response = await getFacets();
+        console.log("Facets recibidos:", response);
+
+        // ✅ Verificar que `response.categorias` existe y es un array
+        if (response && response.categorias && Array.isArray(response.categorias)) {
+          setCategories(response.categorias);
+        } else {
+          setCategories([]); // ✅ Si no es un array, lo inicializamos vacío
+        }
+      } catch (error) {
+        console.error("Error al obtener facets:", error);
+        setCategories([]); // ✅ En caso de error, evitar `undefined`
+      }
+    };
+
+    fetchFacets();
+  }, []);
+
+  // 🔹 Filtrar productos por búsqueda y categoría
+  useEffect(() => {
+    let results = products;
+
+    if (searchTerm) {
+      results = results.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (selectedCategory) {
+      results = results.filter((product) => product.category === selectedCategory);
+    }
+
     setFilteredProducts(results);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory, products]);
 
   if (loading) {
     return <Loader />;
   }
 
-  // Dividir productos por categoría después de la búsqueda
-  const destacados = filteredProducts.filter((product) => product.category === 'destacados');
-  const nuevos = filteredProducts.filter((product) => product.category === 'nuevos');
-  const masVendidos = filteredProducts.filter((product) => product.category === 'mas-vendidos');
-  const ofertas = filteredProducts.filter((product) => product.category === 'ofertas');
+  // 🔹 Dividir productos por categorías fijas
+  const categoriasFijas = [
+    { key: 'destacados', titulo: 'Productos Destacados' },
+    { key: 'nuevos', titulo: 'Nuevos Lanzamientos' },
+    { key: 'mas-vendidos', titulo: 'Los Más Vendidos' },
+    { key: 'ofertas', titulo: 'Ofertas Especiales' }
+  ];
 
   return (
     <main className="home">
       <section className="home__hero">
         <h1 className="home__title">Bienvenido a D@rkCart</h1>
-        <p className="home__subtitle">
-          Explora nuestra tienda y descubre productos increíbles.
-        </p>
+        <p className="home__subtitle">Explora nuestra tienda y descubre productos increíbles.</p>
       </section>
-      {/* Barra de búsqueda */}
+
+      {/* 🔹 Barra de búsqueda */}
       <section className="home__search">
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </section>
-      {/* Sección de Productos Destacados */}
-      <section className="home__products home__products--destacados">
-        <h2 className="home__section-title">Productos Destacados</h2>
-        {destacados.length > 0 ? (
-          <ProductList products={destacados} addToCart={addToCart} />
-        ) : (
-          <Message text="No hay productos destacados disponibles." />
-        )}
+
+      {/* 🔹 Filtros de categoría con `facets` */}
+      <section className="home__filters">
+        <label htmlFor="category">Filtrar por categoría:</label>
+        <select id="category" onChange={(e) => setSelectedCategory(e.target.value)}>
+          <option value="">Todas</option>
+          {categories.map((cat) => (
+            <option key={cat.key} value={cat.key}>
+              {cat.key} ({cat.doc_count})
+            </option>
+          ))}
+        </select>
       </section>
-      {/* Sección de Productos Nuevos */}
-      <section className="home__products home__products--nuevos">
-        <h2 className="home__section-title">Productos Nuevos</h2>
-        {nuevos.length > 0 ? (
-          <ProductList products={nuevos} addToCart={addToCart} />
-        ) : (
-          <Message text="No hay productos nuevos disponibles." />
-        )}
-      </section>
-      {/* Sección de Los Más Vendidos */}
-      <section className="home__products home__products--mas-vendidos">
-        <h2 className="home__section-title">Los Más Vendidos</h2>
-        {masVendidos.length > 0 ? (
-          <ProductList products={masVendidos} addToCart={addToCart} />
-        ) : (
-          <Message text="No hay productos más vendidos disponibles." />
-        )}
-      </section>
-      {/* Sección de Ofertas Especiales */}
-      <section className="home__products home__products--ofertas">
-        <h2 className="home__section-title">Ofertas Especiales</h2>
-        {ofertas.length > 0 ? (
-          <ProductList products={ofertas} addToCart={addToCart} />
-        ) : (
-          <Message text="No hay ofertas especiales disponibles." />
-        )}
-      </section>
+
+      {/* 🔹 Secciones Fijas con Productos Filtrados */}
+      {categoriasFijas.map(({ key, titulo }) => {
+        const productosCategoria = filteredProducts.filter((product) => product.category === key);
+
+        if (productosCategoria.length === 0) return null; // Oculta la sección si no tiene productos
+
+        return (
+          <section key={key} className="home__products">
+            <h2 className="home__section-title">{titulo}</h2>
+            <ProductList products={productosCategoria} addToCart={addToCart} />
+          </section>
+        );
+      })}
     </main>
   );
 };

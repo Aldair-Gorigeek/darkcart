@@ -5,12 +5,12 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Cart from './pages/Cart';
 import useCart from './hooks/useCart'; // Importar el custom hook
-import ProductDetail from './pages/ProductDetail'; // Importar el componente de detalle
+import ProductDetail from './pages/ProductDetail'; 
 import About from './pages/About'; 
 import Contact from './pages/Contact'; 
 
 function App() {
-  const { cartItems, addToCart, removeFromCart, updateQuantity } = useCart(); // Usar el hook
+  const { cartItems, addToCart, removeFromCart, updateQuantity, clearCart } = useCart(); // Agregar `clearCart`
 
   return (
     <Router>
@@ -25,13 +25,11 @@ function App() {
                 cartItems={cartItems}
                 removeFromCart={removeFromCart}
                 updateQuantity={updateQuantity} 
+                clearCart={clearCart} // 🔹 Pasar `clearCart` a `Cart.jsx`
               />
             }
           />
-          <Route
-            path="/product/:id"
-            element={<ProductDetail addToCart={addToCart} />}
-          />
+          <Route path="/product/:id" element={<ProductDetail addToCart={addToCart} />} />
           <Route path="/about" element={<About />} /> 
           <Route path="/contact" element={<Contact />} /> 
           <Route path="*" element={<h1>Página no encontrada</h1>} />

@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/ProductDetail.css';
-import products from '../data/products.jsx'; // Importar productos simulados
 import Button from '../components/Button';
+import api from '../api/axiosInstance';
 
 const ProductDetail = ({ addToCart }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const product = products.find((p) => p.id === parseInt(id));
+  useEffect(() => {
+    api.get(`/items/${id}`)
+      .then((response) => {
+        setProduct(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error al obtener el producto:', err);
+        setError('Producto no encontrado');
+        setLoading(false);
+      });
+  }, [id]);
 
-  if (!product) {
-    return <p>Producto no encontrado</p>;
+  if (loading) {
+    return <p>Cargando producto...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (

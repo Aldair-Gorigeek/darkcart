@@ -39,8 +39,13 @@ const useCart = () => {
       )
     );
   };
+    
+  // 🔹 ✅ Nueva función para limpiar el carrito
+  const clearCart = () => {
+    setCartItems([]);
+  };
 
-  return { cartItems, addToCart, removeFromCart, updateQuantity };
+  return { cartItems, addToCart, removeFromCart, updateQuantity, clearCart };
 };
 
 export default useCart;
